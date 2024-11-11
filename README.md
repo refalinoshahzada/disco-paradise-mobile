@@ -17,7 +17,7 @@ samples, guidance on mobile development, and a full API reference.
 
 
 # Tugas 7
-### - [x] Jelaskan apa yang dimaksud dengan stateless widget dan stateful widget, dan jelaskan perbedaan dari keduanya.
+### Jelaskan apa yang dimaksud dengan stateless widget dan stateful widget, dan jelaskan perbedaan dari keduanya.
 
 Stateless widget dari namanya adalah widget yang tidak memilik "state" atau dalam kata lain widget yang dalam kondisi dapat berubah setelah widget tersebut dibuat. Widget yang ini cocok untuk menampilkan data yang statis atau tetap.
 
@@ -29,7 +29,7 @@ Beberapa perbedaan dari kedua hal tersebut adalah:
 - Stateless widget digunakan untuk elemen yang statis sementara stateful digunakan untuk elemen yang dinamis
 - Stateless widget lebih efisien dan ringan sedangkan stateful widget lebih kompleks.
 
-### - [x] Sebutkan widget apa saja yang kamu gunakan pada proyek ini dan jelaskan fungsinya.
+### Sebutkan widget apa saja yang kamu gunakan pada proyek ini dan jelaskan fungsinya.
 Pada berkas `main.dart`, saya menggunakan widget sebagai berikut:
 1. `MaterialApp:
 
@@ -99,7 +99,7 @@ Widget untuk menampilkan ikon. Pada proyek ini, `Icon` digunakan dalam `ItemCard
 
 Widget untuk menampilkan pesan sementara di bagian bawah layar. Di sini, `SnackBar` digunakan untuk menampilkan pesan kepada pengguna setiap kali mereka menekan `ItemCard`.
 
-### - [x] Apa fungsi dari `setState()?` Jelaskan variabel apa saja yang dapat terdampak dengan fungsi tersebut.
+### Apa fungsi dari `setState()?` Jelaskan variabel apa saja yang dapat terdampak dengan fungsi tersebut.
 
 Fungsi `setState()` dalam Flutter digunakan untuk memberi tahu framework bahwa ada perubahan pada state dari sebuah Stateful Widget yang membutuhkan pembaruan ulang (re-render) dari UI.\
 
@@ -107,7 +107,7 @@ Contoh variabel yang terpengaruhi oleh `setState()` adalah:
 - Counter (`int counter`)
 - Status (`bool isSelected`)
 
-### -[x] Jelaskan perbedaan antara const dengan final.
+### Jelaskan perbedaan antara const dengan final.
 
 Pada `const`:
 - Nilai harus sudah diketahui pada waktu kompilasi dan tidak dapat diubah setelah ditetapkan
@@ -119,7 +119,7 @@ Pada `final`:
 - Digunakan untuk mendeklarasikan variabel yang tidak bisa diubah setelah pertama kali diatur, tetapi nilainya bisa ditentukan pada runtime
 - Cocok untuk variabel yang nilainya dihitung atau diatur secara dinamis tetapi tidak akan berubah setelah diatur
 
-### - [x] Jelaskan bagaimana cara kamu mengimplementasikan checklist-checklist di atas.
+### Jelaskan bagaimana cara kamu mengimplementasikan checklist-checklist di atas.
 
  - [x] Membuat sebuah program Flutter baru dengan tema E-Commerce yang sesuai dengan tugas-tugas sebelumnya.
  
@@ -376,5 +376,124 @@ class ItemCard extends StatelessWidget {
 }
 ```
 
-
 Segala isi dari kedua berkas tersebut memenuhi semua checklist diatas.
+
+# Tugas 8
+### Apa kegunaan `const` di Flutter? Jelaskan apa keuntungan ketika menggunakan `const` pada kode Flutter. Kapan sebaiknya kita menggunakan `const`, dan kapan sebaiknya tidak digunakan?
+
+Kegunaan `const` di Flutter adalah untuk mendefinisikan widget atau nilai yang bersifat tetap dan tidak berubah sepanjang runtime.
+
+Keuntungan Menggunakan `const` di Flutter:
+1. **Optimalisasi Performa**: Flutter menghindari pembuatan ulang widget `const`, sehingga meningkatkan efisiensi.
+2. **Memory Efficiency**: Objek `const` hanya dibuat sekali dan dibagikan di seluruh aplikasi, menghemat penggunaan memori.
+3. **Hot Reload Cepat**: Menggunakan `const` mempercepat proses hot reload karena Flutter dapat langsung mengenali bahwa widget tersebut tidak perlu di-render ulang.
+
+Kapan Menggunakan `const`:
+- Gunakan `const` saat widget atau nilai tidak akan berubah setelah inisialisasi, seperti pada teks statis atau ikon tetap.
+- Pada widget yang tidak memiliki state dan hanya menampilkan data yang tetap.
+
+Kapan Tidak Menggunakan `const`:
+- Jika widget atau nilai akan berubah sepanjang waktu, misalnya berdasarkan interaksi pengguna atau state yang dinamis, sebaiknya tidak menggunakan `const`.
+
+### Jelaskan dan bandingkan penggunaan Column dan Row pada Flutter. Berikan contoh implementasi dari masing-masing layout widget ini!
+
+Column dan Row adalah widget di Flutter yang digunakan untuk menyusun widget secara vertikal dan horizontal.
+Perbedaan:
+
+  - Column: Menyusun widget secara vertikal (dari atas ke bawah).
+  - Row: Menyusun widget secara horizontal (dari kiri ke kanan).
+
+### Sebutkan apa saja elemen input yang kamu gunakan pada halaman form yang kamu buat pada tugas kali ini. Apakah terdapat elemen input Flutter lain yang tidak kamu gunakan pada tugas ini? Jelaskan!
+
+Elemen input yang saya gunakan pada halaman formm saya adalah sebagai berikut:
+1. `TextFormField`: Digunakan untuk memasukkan data teks pada beberapa field, yaitu:
+  - `Name`
+  - `Price`
+  - `Description`
+  - `Date of Distribution`
+  - `Stock Available`
+  - `Genre`
+2. `ElevatedButton`: Tombol "Save" untuk menyimpan data
+
+
+### Bagaimana cara kamu mengatur tema (theme) dalam aplikasi Flutter agar aplikasi yang dibuat konsisten? Apakah kamu mengimplementasikan tema pada aplikasi yang kamu buat?
+
+Pada aplikasi ini, saya mengatur tema agar konsisten dengan menggunakan `ThemeData` di dalam widget `MaterialApp`. Tema diatur dalam properti `theme` dengan menggunakan `ColorScheme` dan `primarySwatch`, yang di sini diatur ke warna ungu (`Colors.green`) sebagai warna utama dan `black` sebagai warna sekunder. Saya juga mengaktifkan `useMaterial3` untuk mendapatkan tampilan yang lebih modern sesuai dengan standar Material Design 3.
+
+Tema ini konsisten diterapkan ke seluruh aplikasi melalui widget `Theme.of(context)`, yang memudahkan perubahan warna elemen seperti `AppBar`, tombol, dan lainnya yang secara otomatis mengikuti warna utama dan sekunder yang sudah ditetapkan.
+
+### Bagaimana cara kamu menangani navigasi dalam aplikasi dengan banyak halaman pada Flutter?
+
+Pada aplikasi ini, untuk menangani navigasi saya menggunakan `Drawer`, lebih spesifiknya adalah `Drawer` pada bagian kiri aplikasi. Berikut adalah kode yang saya gunakan untuk implementasi `Drawer` tersebut:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:disco_paradise/screens/menu.dart';
+import 'package:disco_paradise/screens/albumentry_form.dart';
+
+class LeftDrawer extends StatelessWidget {
+  const LeftDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            child: const Column(
+              children: [
+                Text(
+                  'Disco Paradise',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Padding(padding: EdgeInsets.all(8)),
+                Text(
+                  "Buy all your favorite albums here!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.home_outlined),
+            title: const Text('Halaman Utama'),
+            // Bagian redirection ke MyHomePage
+            onTap: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyHomePage(),
+                  ));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.album),
+            title: const Text('Tambah Album'),
+            // Bagian redirection ke MoodEntryFormPage
+            onTap: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AlbumEntryFormPage(),
+                  ));
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
