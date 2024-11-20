@@ -497,3 +497,74 @@ class LeftDrawer extends StatelessWidget {
   }
 }
 ```
+
+# Tugas 9
+1. **Mengapa Membuat Model untuk JSON?**  
+   Model digunakan untuk memetakan struktur data JSON ke dalam bentuk yang dapat dikelola oleh aplikasi. Tanpa model, manipulasi data menjadi rawan kesalahan, misalnya kesalahan tipe data atau key yang tidak ditemukan. Meski tanpa model tidak selalu menyebabkan error, manajemen data menjadi lebih sulit dan tidak terstruktur.
+
+2. **Fungsi Library `http`:**  
+   Library `http` digunakan untuk membuat permintaan HTTP (GET, POST, dll.) ke server, seperti mengambil data dari API atau mengirim data JSON. Library ini mempermudah komunikasi antara aplikasi Flutter dan server backend.
+
+3. **Fungsi CookieRequest:**  
+   `CookieRequest` digunakan untuk menangani autentikasi berbasis sesi dengan menyimpan cookie dari server. Instance `CookieRequest` perlu dibagikan ke seluruh komponen agar sesi login tetap konsisten di aplikasi, memungkinkan akses ke data pengguna tanpa perlu login ulang.
+
+4. **Mekanisme Pengiriman Data:**  
+   - Input data di Flutter dikumpulkan melalui form.  
+   - Data dikirimkan dalam format JSON menggunakan library `http` ke backend Django.  
+   - Django memproses data, menyimpannya ke database, dan mengembalikan respons.  
+   - Flutter menerima respons dan menampilkan data sesuai kebutuhan pengguna.
+
+5. **Mekanisme Autentikasi:**  
+   - **Login/Register:** Data akun dikirim dari Flutter ke Django melalui POST request. Django memvalidasi data, membuat akun baru (register), atau mengautentikasi pengguna (login), lalu mengembalikan cookie/sesi untuk login berhasil.  
+   - **Logout:** Django menghapus sesi saat menerima permintaan logout.  
+   - Flutter menggunakan status login untuk menampilkan menu atau fitur khusus pengguna yang telah terautentikasi.
+  
+
+### Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
+**Mengimplementasikan fitur registrasi akun pada proyek tugas Flutter:**
+
+Membuat halaman registrasi (`register.dart`) dengan form input untuk username, password, dan konfirmasi password.
+Menggunakan widget TextFormField untuk input data pengguna.
+Menambahkan tombol Register yang ketika ditekan akan mengirim data ke server Django menggunakan CookieRequest.
+Menggunakan method postJson untuk mengirim data ke endpoint registrasi di server Django.
+
+**Membuat halaman login pada proyek tugas Flutter:**
+
+Membuat halaman login (login.dart) dengan form input untuk username dan password.
+Menggunakan widget TextFormField untuk input username dan password.
+Menambahkan tombol Login yang ketika ditekan akan mengautentikasi pengguna melalui server Django.
+Menggunakan method login dari CookieRequest untuk mengirim data ke endpoint login Django.
+Jika login berhasil, navigasi ke halaman utama aplikasi.
+
+**Mengintegrasikan sistem autentikasi Django dengan proyek tugas Flutter:**
+
+Menggunakan paket pbp_django_auth untuk memudahkan integrasi autentikasi dengan Django.
+Menyimpan cookie session dari Django untuk mempertahankan sesi login.
+Menggunakan Provider untuk mengelola state autentikasi di seluruh aplikasi.
+Membuat model kustom sesuai dengan proyek aplikasi Django:
+
+Membuat model AlbumEntry sesuai dengan model di Django.
+Menggunakan factory dan method toJson untuk serialisasi dan deserialisasi data JSON.
+Model ini digunakan untuk memetakan data yang diterima dari endpoint JSON Django.
+
+**Membuat halaman yang berisi daftar semua item yang terdapat pada endpoint JSON di Django yang telah dideploy:**
+
+Membuat halaman list_albumentry.dart yang akan menampilkan daftar album.
+Menggunakan FutureBuilder untuk melakukan fetch data dari endpoint JSON Django.
+Menggunakan method fetchAlbum yang mengirim request GET ke endpoint JSON Django.
+Menampilkan name, price, dan description dari setiap item menggunakan widget ListView.builder.
+
+**Membuat halaman detail untuk setiap item yang terdapat pada halaman daftar Item:**
+
+Menambahkan GestureDetector atau InkWell pada setiap item di list untuk mendeteksi klik.
+Ketika item ditekan, navigasi ke halaman detail yang menampilkan semua atribut item tersebut.
+Membuat halaman detail (album_detail.dart) yang menerima objek AlbumEntry sebagai parameter.
+Menampilkan seluruh atribut seperti name, price, description, dateOfDistribution, stockAvailable, dan genre.
+Menambahkan tombol kembali yang mengembalikan pengguna ke halaman daftar item.
+
+**Melakukan filter pada halaman daftar item dengan hanya menampilkan item yang terasosiasi dengan pengguna yang login:**
+
+Menyesuaikan endpoint di Django untuk mengembalikan data yang terfilter berdasarkan pengguna yang sedang login.
+Pada method fetchAlbum, pastikan request mengirim cookie session agar server mengenali sesi pengguna.
+Di sisi Django, gunakan request.user untuk memfilter data yang dikembalikan.
+Pastikan hanya item milik pengguna yang login yang ditampilkan di Flutter.

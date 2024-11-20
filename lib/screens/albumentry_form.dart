@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:disco_paradise/widgets/left_drawer.dart';
+import 'package:disco_paradise/models/album_entry.dart';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'dart:convert';
+import 'package:disco_paradise/screens/menu.dart';
 
 class AlbumEntryFormPage extends StatefulWidget {
   const AlbumEntryFormPage({super.key});
@@ -19,6 +24,7 @@ class _AlbumEntryFormPageState extends State<AlbumEntryFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -49,38 +55,39 @@ class _AlbumEntryFormPageState extends State<AlbumEntryFormPage> {
                       backgroundColor: MaterialStateProperty.all(
                           Theme.of(context).colorScheme.primary),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Album entry saved successfully'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Name: $_name'),
-                                    Text('Price: $_price'),
-                                    Text('Description: $_description'),
-                                    Text('Date of Distribution: $_dateOfDistribution'),
-                                    Text('Stock Available: $_stockAvailable'),
-                                    Text('Genre: $_genre')
-                                  ],
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    _formKey.currentState!.reset();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
+                        // Kirim ke Django dan tunggu respons
+                        final response = await request.postJson(
+                          "http://10.0.2.2/create-flutter/",
+                          jsonEncode(<String, String>{
+                            'name': _name,
+                            'price': _price.toString(),
+                            'description': _description,
+                            'date_of_distribution': _dateOfDistribution,
+                            'stock_available': _stockAvailable.toString(),
+                            'genre': _genre,
+                          }),
                         );
+                        if (context.mounted) {
+                          if (response['status'] == 'success') {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("Album baru berhasil disimpan!"),
+                            ));
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MyHomePage()),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text(
+                                  "Terdapat kesalahan, silakan coba lagi."),
+                            ));
+                          }
+                        }
                       }
                     },
                     child: const Text(
@@ -120,6 +127,86 @@ class _AlbumEntryFormPageState extends State<AlbumEntryFormPage> {
           return null;
         },
         keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
+      ),
+    );
+  }
+}
+
+class AlbumEntryPage extends StatefulWidget {
+  const AlbumEntryPage({super.key});
+
+  @override
+  State<AlbumEntryPage> createState() => _AlbumEntryPageState();
+}
+
+class _AlbumEntryPageState extends State<AlbumEntryPage> {
+  Future<List<AlbumEntry>> fetchAlbum(CookieRequest request) async {
+    final response = await request.get('http://[APP_URL_KAMU]/json/');
+    var data = response;
+    List<AlbumEntry> listAlbum = [];
+    for (var d in data) {
+      if (d != null) {
+        listAlbum.add(AlbumEntry.fromJson(d));
+      }
+    }
+    return listAlbum;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Album Entry List'),
+      ),
+      drawer: const LeftDrawer(),
+      body: FutureBuilder(
+        future: fetchAlbum(request),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.data == null) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            if (!snapshot.hasData) {
+              return const Column(
+                children: [
+                  Text(
+                    'Belum ada data album pada disco paradise.',
+                    style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
+                  ),
+                  SizedBox(height: 8),
+                ],
+              );
+            } else {
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (_, index) => Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${snapshot.data![index].fields.name}",
+                        style: const TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text("${snapshot.data![index].fields.description}"),
+                      const SizedBox(height: 10),
+                      Text("${snapshot.data![index].fields.price}"),
+                      const SizedBox(height: 10),
+                      Text("${snapshot.data![index].fields.dateOfDistribution}")
+                    ],
+                  ),
+                ),
+              );
+            }
+          }
+        },
       ),
     );
   }
